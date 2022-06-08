@@ -13,9 +13,14 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 
 public class AccountService {
-    private static final String BASE_URL = "http://localhost:8080/";
+    private String baseUrl;
     private final RestTemplate restTemplate = new RestTemplate();
     private AuthenticatedUser currentUser;
+
+    public AccountService(String url, AuthenticatedUser currentUser) {
+        this.currentUser = currentUser;
+        baseUrl = url;
+    }
 
     private HttpEntity<Void> makeAuthEntity() {
         HttpHeaders headers = new HttpHeaders();
@@ -23,14 +28,15 @@ public class AccountService {
         return new HttpEntity<>(headers);
     }
 
-    public void getBalance() {
-        BigDecimal balance = null;
+    public BigDecimal getBalance() {
+        BigDecimal balance = new BigDecimal(0);
         try {
-            ResponseEntity<AuthenticatedUser> response = restTemplate.exchange(BASE_URL + currentUser.getUser().getId(), HttpMethod.GET, makeAuthEntity(), AuthenticatedUser.class);
-            balance = response.getBody().getUser()
-            System.out.println("Your current balance is: \n" + balance);
+            ResponseEntity<BigDecimal> response = restTemplate.exchange(baseUrl + "balance/" + currentUser.getUser().getId(), HttpMethod.GET, makeAuthEntity(), BigDecimal.class);
+            balance = response.getBody();
+            System.out.println("Your current balance is: \n" + "$" + balance);
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
+        return balance;
     }
 }
