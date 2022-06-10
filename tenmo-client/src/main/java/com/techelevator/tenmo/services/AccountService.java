@@ -27,7 +27,7 @@ public class AccountService {
         headers.setBearerAuth(currentUser.getToken());
         return new HttpEntity<>(headers);
     }
-
+    //getting the balance
     public BigDecimal getBalance() {
         BigDecimal balance = new BigDecimal(0);
         try {
