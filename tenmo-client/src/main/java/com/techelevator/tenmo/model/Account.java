@@ -1,17 +1,14 @@
 package com.techelevator.tenmo.model;
 
-import jdk.jfr.Name;
-
+import java.math.BigDecimal;
 
 import java.math.BigDecimal;
 
 public class Account {
 
-    @Name("account_id")
     private int accountId;
     private int userId;
     private BigDecimal balance;
-
 
     public Account(int accountId, int userId, BigDecimal balance) {
         this.accountId = accountId;
@@ -19,7 +16,7 @@ public class Account {
         this.balance = balance;
     }
 
-    public Account(){}
+    public Account(){};
 
 
     //setters & getters
@@ -47,3 +44,5 @@ public class Account {
         this.balance = balance;
     }
 }
+
+

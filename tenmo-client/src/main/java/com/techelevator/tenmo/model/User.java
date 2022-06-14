@@ -31,4 +31,15 @@ public class User {
             return false;
         }
     }
+
+    //added
+    @Override
+    public String toString(){
+
+        return id + "    " + username; //prints out in words
+
+    }
+
+
+
 }

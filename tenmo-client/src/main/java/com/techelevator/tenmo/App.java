@@ -1,10 +1,15 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TenmoService;
+import com.techelevator.tenmo.services.TransferService;
+
+import java.math.BigDecimal;
 
 public class App {
 
@@ -12,8 +17,9 @@ public class App {
 
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
-
-    private AuthenticatedUser currentUser;
+    private final TransferService transferService = new TransferService();
+    private AuthenticatedUser currentUser; //when make a call to server, use this person with token
+    TenmoService tenmoService = new TenmoService();
 
     public static void main(String[] args) {
         App app = new App();
@@ -59,6 +65,10 @@ public class App {
         if (currentUser == null) {
             consoleService.printErrorMessage();
         }
+        else{
+            tenmoService.setAuthToken(currentUser.getToken());//added
+            transferService.setAuthToken(currentUser.getToken());//added
+        }
     }
 
     private void mainMenu() {
@@ -87,16 +97,27 @@ public class App {
 
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
-        AccountService accountService = new AccountService(API_BASE_URL, currentUser);
-        try {
-            accountService.getBalance();
-        } catch (NullPointerException e) {
-            System.err.println("No balance could be found. Please try again.");
-        }
+        System.out.println(tenmoService.getBalance());
 	}
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
+        Transfer[] transferList = transferService.getTransferList();
+        consoleService.printTransactionHeader();
+        for (Transfer eachTransfer : transferList) {
+            System.out.println(eachTransfer.toString());
+        }
+        consoleService.printTransactionHeaderBottom();
+        int transferId = consoleService.promptForInt("Enter transfer id to view transaction (0 to cancel): ");
+        if (transferId == 0) {
+            consoleService.printMainMenu();
+        } else {
+            consoleService.printTransactionDetailsHeader();
+            Transfer transfer = new Transfer();
+            transfer = transferService.getTransferById(transferId);
+            System.out.println(transfer.toStringForTransferDetails());
+            consoleService.printTransactionHeaderBottom();
+        }
 		
 	}
 
@@ -107,6 +128,46 @@ public class App {
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
+        User[] userList = tenmoService.getAllUsersForSendingMoney();
+        consoleService.printSendTEBucksHeader();
+        for (User eachUser : userList) {
+            System.out.println(eachUser.toString()); //will print out each user down on the list
+
+            /**
+             * match id boolean
+             * while true
+             * prmpty enter id the send money to
+             *
+             */
+        }
+        boolean matchId = false;
+        consoleService.printTransactionHeaderBottom();
+        while (!matchId) {
+            int userToId = consoleService.promptForInt("\nEnter user id to send money to (0 to cancel): ");
+
+            for (User user : userList) {
+                if (user.getId() == userToId && userToId != 0) {
+
+                    if (!user.getUsername().equals(currentUser)) {
+                        matchId = true;
+                    }
+
+                } else if (userToId == 0){  consoleService.printMainMenu(); return; } // break breaks out of loop
+            }                                                                         // return breaks out of the method
+
+            if (matchId) {
+                double inputAmount = consoleService.promptForDouble("\nEnter Dollar amount including decimal: $");
+                BigDecimal transferAmount = BigDecimal.valueOf(inputAmount);
+                Transfer transfer = new Transfer();
+                transfer.setAmount(transferAmount);
+                transfer.setReceiverId(userToId);
+                transferService.sendMoney(transfer);
+
+            } else {
+                System.out.println("User ID is not found");
+                break;
+            }
+        }
 		
 	}
 

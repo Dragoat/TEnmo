@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,11 +13,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Component  //Spring can't use without this @component, Spring can't give a Jdbc Object
 public class JdbcUserDao implements UserDao {
 
     private static final BigDecimal STARTING_BALANCE = new BigDecimal("1000.00");
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public JdbcUserDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -41,8 +42,34 @@ public class JdbcUserDao implements UserDao {
         while(results.next()) {
             User user = mapRowToUser(results);
             users.add(user);
+            System.out.println("Added" + user.getUsername());//use to see if client is touching this method
         }
         return users;
+    }
+    @Override
+    public List<User> findAllForSendingMoney(int id) {
+        System.out.println(id);
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT user_id, username FROM tenmo_user WHERE user_id != ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+        while(results.next()) {
+            User user = mapRowToPartUser(results);
+            users.add(user);
+        }
+        return users;
+    }
+
+    @Override
+    public String findUserNameByAccountId(int id) {
+        String sql = "SELECT username FROM tenmo_user JOIN account ON account.user_id = tenmo_user.user_id" +
+                " WHERE account_id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+        String userName = "";
+        if(rowSet.next()) {
+            userName = rowSet.getString("username");
+        }
+
+        return userName;
     }
 
     @Override
@@ -57,7 +84,6 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean create(String username, String password) {
-
         // create user
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
@@ -67,7 +93,6 @@ public class JdbcUserDao implements UserDao {
         } catch (DataAccessException e) {
             return false;
         }
-
         // create account
         sql = "INSERT INTO account (user_id, balance) values(?, ?)";
         try {
@@ -75,7 +100,6 @@ public class JdbcUserDao implements UserDao {
         } catch (DataAccessException e) {
             return false;
         }
-
         return true;
     }
 
@@ -86,6 +110,12 @@ public class JdbcUserDao implements UserDao {
         user.setPassword(rs.getString("password_hash"));
         user.setActivated(true);
         user.setAuthorities("USER");
+        return user;
+    }
+    private User mapRowToPartUser(SqlRowSet rs) {
+        User user = new User();
+        user.setId(rs.getLong("user_id"));
+        user.setUsername(rs.getString("username"));
         return user;
     }
 }

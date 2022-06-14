@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 
 public class AccountService {
-    private String BASE_URL;
+   /* private String BASE_URL;
     private final RestTemplate restTemplate = new RestTemplate();
     private AuthenticatedUser currentUser;
 
@@ -38,4 +38,7 @@ public class AccountService {
         }
         return balance;
     }
+
+
+    */
 }

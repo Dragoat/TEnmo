@@ -88,4 +88,43 @@ public class ConsoleService {
         System.out.println("An error occurred. Check the log for details.");
     }
 
+    //added
+    public void printSendTEBucksHeader(){
+        System.out.println("_____________________________________________________");
+        System.out.println("User                                                 ");
+        System.out.println("ID      Name                                         ");
+        System.out.println("_____________________________________________________");
+    }
+
+    public void printTransactionHeaderBottom(){
+        System.out.println("_____________");
+    }
+
+    public void printTransactionDetailsHeader(){
+        System.out.println("_____________________________________________________");
+        System.out.println("                Transfer Details                     ");
+        System.out.println("_____________________________________________________");
+    }
+
+    public void printTransactionHeader(){
+        System.out.println("_____________________________________________________");
+        System.out.println("Transfers                                            ");
+        System.out.println("ID                   From/To                 Amount  ");
+        System.out.println("_____________________________________________________");
+
+    }
+
+    public double promptForDouble(String prompt) {
+        System.out.print(prompt);
+        while (true) {
+            try {
+                return Double.parseDouble(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a decimal number.");
+            }
+        }
+    }
+
+
+
 }
