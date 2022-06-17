@@ -7,6 +7,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 
 
 public class TransferService {
@@ -62,6 +63,20 @@ public class TransferService {
         return new HttpEntity<>(transfer, headers);
     }
 
+    public BigDecimal getBalance(){
+        BigDecimal balance = null;
+        try{
+            ResponseEntity< BigDecimal > response = restTemplate.exchange(API_BASE_URL + "accounts" , HttpMethod.GET, makeAuthEntity(), BigDecimal.class );
+            balance = response.getBody();
+        }
+        catch (RestClientResponseException | ResourceAccessException e ) {
+            BasicLogger.log(e.getMessage());
+        }
+        return balance;
+    }
+
+
+
 
     private HttpEntity<Void> makeAuthEntity () {
         HttpHeaders headers = new HttpHeaders();
@@ -69,5 +84,15 @@ public class TransferService {
         headers.setBearerAuth(authToken);
         return new HttpEntity<>(headers);
     }
+
+
+
+
+
+
+
+
+
+
 }
 

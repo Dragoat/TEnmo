@@ -9,6 +9,7 @@ import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TenmoService;
 import com.techelevator.tenmo.services.TransferService;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 
 public class App {
@@ -97,18 +98,52 @@ public class App {
 
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
-        System.out.println(tenmoService.getBalance());
+        System.out.println(transferService.getBalance());
 	}
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
+        showTransactionList();
+        int transferId = consoleService.promptForInt("Enter transfer id to view transaction (0 to cancel): ");
+        selection(transferId);
+
+	}
+
+
+
+
+	private void viewPendingRequests() {
+		// TODO Auto-generated method stub
+	}
+
+	private void sendBucks() {
+		// TODO Auto-generated method stub
+         //will print out each user down on the list
+
+        User existingUsers[] = AllUserList();
+        selectUserToTransfer(existingUsers);
+
+        }
+
+
+    private void requestBucks() {
+        // TODO Auto-generated method stub
+
+    }
+
+
+
+
+    private void showTransactionList(){
         Transfer[] transferList = transferService.getTransferList();
         consoleService.printTransactionHeader();
         for (Transfer eachTransfer : transferList) {
             System.out.println(eachTransfer.toString());
         }
+    }
+
+    public void selection(int transferId) {
         consoleService.printTransactionHeaderBottom();
-        int transferId = consoleService.promptForInt("Enter transfer id to view transaction (0 to cancel): ");
         if (transferId == 0) {
             consoleService.printMainMenu();
         } else {
@@ -118,44 +153,39 @@ public class App {
             System.out.println(transfer.toStringForTransferDetails());
             consoleService.printTransactionHeaderBottom();
         }
-		
-	}
+    }
 
-	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private void sendBucks() {
-		// TODO Auto-generated method stub
+
+    public User[] AllUserList() {
         User[] userList = tenmoService.getAllUsersForSendingMoney();
         consoleService.printSendTEBucksHeader();
         for (User eachUser : userList) {
-            System.out.println(eachUser.toString()); //will print out each user down on the list
-
-            /**
-             * match id boolean
-             * while true
-             * prmpty enter id the send money to
-             *
-             */
+            System.out.println(eachUser.toString());
         }
-        boolean matchId = false;
+
+        return userList;
+
+    }
+
+
+    public void selectUserToTransfer(User[] userList) {
+        boolean IsmatchId = false;
         consoleService.printTransactionHeaderBottom();
-        while (!matchId) {
+        while (!IsmatchId) {
             int userToId = consoleService.promptForInt("\nEnter user id to send money to (0 to cancel): ");
 
             for (User user : userList) {
                 if (user.getId() == userToId && userToId != 0) {
 
                     if (!user.getUsername().equals(currentUser)) {
-                        matchId = true;
+                        IsmatchId = true;
                     }
 
                 } else if (userToId == 0){  consoleService.printMainMenu(); return; } // break breaks out of loop
             }                                                                         // return breaks out of the method
 
-            if (matchId) {
+            if (IsmatchId) {
                 double inputAmount = consoleService.promptForDouble("\nEnter Dollar amount including decimal: $");
                 BigDecimal transferAmount = BigDecimal.valueOf(inputAmount);
                 Transfer transfer = new Transfer();
@@ -168,12 +198,11 @@ public class App {
                 break;
             }
         }
-		
-	}
 
-	private void requestBucks() {
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+
+
+
 
 }
