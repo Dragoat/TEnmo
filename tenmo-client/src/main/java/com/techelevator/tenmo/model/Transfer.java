@@ -105,7 +105,7 @@ public class Transfer {
 
     @Override
     public String toString(){ // to string for the transfer list
-        return getTransferId()  + "                 To: " + getUsernameTo()+ "                 $" + getAmount();
+        return getTransferId()  + "                 To: " + getUsernameTo()+ "/" + getUsernameFrom() +   "                 $" + getAmount();
     }
 
     public String toStringForTransferDetails(){ // to string for view transfer details

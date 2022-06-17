@@ -6,6 +6,7 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -34,6 +35,8 @@ public class TransferController {
         int userId = userDao.findIdByUsername(principal.getName());
         return transferDao.getTransfersList(userId);
     }
+
+
 
     @RequestMapping(method = RequestMethod.PUT)
     public void withdrawFromSender(@RequestBody Transfer transfer, Principal principal) throws Exception{

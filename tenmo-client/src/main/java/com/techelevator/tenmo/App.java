@@ -11,6 +11,7 @@ import com.techelevator.tenmo.services.TransferService;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.util.Scanner;
 
 public class App {
 
@@ -121,13 +122,20 @@ public class App {
          //will print out each user down on the list
 
         User existingUsers[] = AllUserList();
-        selectUserToTransfer(existingUsers);
+        String str1 = "\nEnter user id to request money from (0 to cancel): ";
+        selectUserToTransfer(existingUsers,str1);
 
         }
 
 
     private void requestBucks() {
         // TODO Auto-generated method stub
+        User existingUsers[] = AllUserList();
+        Scanner scanner = new Scanner(System.in);
+        String UserIdRequest = scanner.nextLine();
+        int RequestedUser = consoleService.promptForInt(UserIdRequest);
+        String str1 = "\nEnter user id to send money to (0 to cancel): ";
+        selectUserToTransfer(existingUsers, str1);
 
     }
 
@@ -169,11 +177,11 @@ public class App {
     }
 
 
-    public void selectUserToTransfer(User[] userList) {
+    public void selectUserToTransfer(User[] userList,String str1) {
         boolean IsmatchId = false;
         consoleService.printTransactionHeaderBottom();
         while (!IsmatchId) {
-            int userToId = consoleService.promptForInt("\nEnter user id to send money to (0 to cancel): ");
+            int userToId = consoleService.promptForInt(str1);
 
             for (User user : userList) {
                 if (user.getId() == userToId && userToId != 0) {
