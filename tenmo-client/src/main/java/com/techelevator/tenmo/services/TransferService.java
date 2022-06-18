@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.services;
 
+import com.techelevator.tenmo.ExceptionClientHandler;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
@@ -26,7 +27,7 @@ public class TransferService {
         try {
             restTemplate.exchange(API_BASE_URL + "transfers/", HttpMethod.PUT, makeTransferEntity(transfer), Void.class);
 
-        } catch (RestClientResponseException | ResourceAccessException e) {
+        } catch (RestClientResponseException | ResourceAccessException e ) {
             BasicLogger.log(e.getMessage());
 
         }

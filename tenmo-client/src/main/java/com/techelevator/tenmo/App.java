@@ -11,6 +11,7 @@ import com.techelevator.tenmo.services.TransferService;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.Scanner;
 
 public class App {
@@ -110,9 +111,6 @@ public class App {
 
 	}
 
-
-
-
 	private void viewPendingRequests() {
 		// TODO Auto-generated method stub
 	}
@@ -127,7 +125,6 @@ public class App {
 
         }
 
-
     private void requestBucks() {
         // TODO Auto-generated method stub
         User existingUsers[] = AllUserList();
@@ -138,9 +135,6 @@ public class App {
         selectUserToTransfer(existingUsers, str1);
 
     }
-
-
-
 
     private void showTransactionList(){
         Transfer[] transferList = transferService.getTransferList();
@@ -177,7 +171,7 @@ public class App {
     }
 
 
-    public void selectUserToTransfer(User[] userList,String str1) {
+    public void selectUserToTransfer(User[] userList, String str1) {
         boolean IsmatchId = false;
         consoleService.printTransactionHeaderBottom();
         while (!IsmatchId) {
@@ -195,10 +189,21 @@ public class App {
 
             if (IsmatchId) {
                 double inputAmount = consoleService.promptForDouble("\nEnter Dollar amount including decimal: $");
+                if(inputAmount <= 0){
+                    System.out.println("Please enter a amount larger than zero");
+                    IsmatchId = true;
+                    break;
+                }
                 BigDecimal transferAmount = BigDecimal.valueOf(inputAmount);
                 Transfer transfer = new Transfer();
                 transfer.setAmount(transferAmount);
                 transfer.setReceiverId(userToId);
+
+                transfer.setAmountToReciver(transferAmount);//added
+                transfer.setSenderId(Math.toIntExact(currentUser.getUser().getId()));//added
+
+
+
                 transferService.sendMoney(transfer);
 
             } else {

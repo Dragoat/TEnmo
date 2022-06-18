@@ -1,7 +1,9 @@
 package com.techelevator.tenmo.services;
 
 
+import com.techelevator.tenmo.ExceptionClientHandler;
 import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.util.BasicLoggerException;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
@@ -121,7 +123,10 @@ public class ConsoleService {
                 return Double.parseDouble(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a decimal number.");
+                return 0.00;
             }
+
+
         }
     }
 

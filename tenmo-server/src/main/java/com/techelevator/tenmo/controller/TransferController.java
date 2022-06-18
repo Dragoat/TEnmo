@@ -41,10 +41,14 @@ public class TransferController {
     @RequestMapping(method = RequestMethod.PUT)
     public void withdrawFromSender(@RequestBody Transfer transfer, Principal principal) throws Exception{
         int senderId =  userDao.findIdByUsername(principal.getName());
+        //int sender = transfer.setSenderId(userDao.findIdByUsername(principal.getName()));
         transfer.setSenderId(userDao.findIdByUsername(principal.getName()));
         transferDao.subtractFromSenderBalance(senderId, transfer.getAmount() );
         transferDao.addToReceiverBalance(transfer.getReceiverId(), transfer.getAmount());
         transferDao.createTransfer(transfer);
+        //transferDao.createTransferToUser(transfer);
+        transferDao.createTransferToSender(transfer);
+
     }
     @RequestMapping(path="/{transferId}", method = RequestMethod.GET)
     public Transfer getTransferByTransferId(@PathVariable int transferId) throws Exception {

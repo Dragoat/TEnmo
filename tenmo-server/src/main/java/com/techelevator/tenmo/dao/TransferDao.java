@@ -17,6 +17,8 @@ public interface TransferDao {
 
     boolean createTransfer(Transfer transfer ) throws Exception;
 
+    boolean createTransferToSender(Transfer transfer) throws Exception;//added
+
     boolean checkBalanceBeforeTransfer(BigDecimal balance, BigDecimal amount);
 
     boolean notZeroOrNegative();

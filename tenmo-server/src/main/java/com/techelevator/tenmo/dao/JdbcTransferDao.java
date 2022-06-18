@@ -70,6 +70,47 @@ public class JdbcTransferDao implements TransferDao {
         return success;
     }
 
+
+
+    @Override
+    public boolean createTransferToSender(Transfer transfer) throws Exception {
+        System.out.println(transfer.toString());
+        String sql = "INSERT INTO transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount)\n" +
+                "VALUES (?, ?, (SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING transfer_id";
+        BigDecimal amount = transfer.getAmount();
+        boolean success = false;
+
+        if (amount.compareTo(accountDao.getBalance(transfer.getSenderId())) <= 0 && amount.compareTo(BigDecimal.ZERO) > 0) {
+            int id = jdbcTemplate.queryForObject(sql, int.class, 2, 2, transfer.getReceiverId(), transfer.getSenderId(), transfer.getAmount());
+            sql = "SELECT * FROM transfer WHERE transfer_id = ?";
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+            success = true;
+            if (results.next()) {
+                mapRowToTransfer(results);
+            }
+        } else
+            throw new Exception("Transfer not logged.");
+        return success;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private Transfer mapRowToTransfer(SqlRowSet results) throws Exception {
         Transfer transfer = new Transfer();
         transfer.setTransferId(results.getInt("transfer_id"));

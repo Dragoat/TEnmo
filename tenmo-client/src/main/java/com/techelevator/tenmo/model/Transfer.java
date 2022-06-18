@@ -47,6 +47,15 @@ public class Transfer {
         this.amount = amount;
     }
 
+
+    public BigDecimal getAmountToReciver() {
+        return amount;
+    }//added
+
+    public void setAmountToReciver(BigDecimal amount) {//added
+        this.amount = amount;
+    }
+
     public int getSenderId() {
         return senderId;
     }
@@ -105,7 +114,7 @@ public class Transfer {
 
     @Override
     public String toString(){ // to string for the transfer list
-        return getTransferId()  + "                 To: " + getUsernameTo()+ "/" + getUsernameFrom() +   "                 $" + getAmount();
+        return getTransferId()  + "                 To: "   + getUsernameFrom()+ "/" + getUsernameTo()+  "                 $" + getAmount();
     }
 
     public String toStringForTransferDetails(){ // to string for view transfer details
