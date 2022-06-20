@@ -113,11 +113,11 @@ public class Transfer {
 
 
     @Override
-    public String toString(){ // to string for the transfer list
+    public String toString(){
         return getTransferId()  + "                 To: "   + getUsernameFrom()+ "/" + getUsernameTo()+  "                 $" + getAmount();
     }
 
-    public String toStringForTransferDetails(){ // to string for view transfer details
+    public String toStringForTransferDetails(){
         return "ID:      " + getTransferId() + "\nFrom:    " + getUsernameFrom() + "\nTo:      " + getUsernameTo() + "\nType:    " + getTransferTypeDesc() + "\nStatus:  " + getTransferStatusDesc()
                 + "\nAmount:  " + getAmount();
     }
