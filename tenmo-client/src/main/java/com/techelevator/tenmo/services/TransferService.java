@@ -83,7 +83,7 @@ public class TransferService {
     public BigDecimal getBalance(){
         BigDecimal balance = null;
         try{
-            ResponseEntity< BigDecimal > response = restTemplate.exchange(API_BASE_URL + "accounts" , HttpMethod.GET, makeAuthEntity(), BigDecimal.class );
+            ResponseEntity< BigDecimal > response = restTemplate.exchange(API_BASE_URL + "account/balance" , HttpMethod.GET, makeAuthEntity(), BigDecimal.class );
             balance = response.getBody();
         }
         catch (RestClientResponseException | ResourceAccessException e ) {

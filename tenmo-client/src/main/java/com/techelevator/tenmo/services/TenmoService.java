@@ -43,7 +43,7 @@ public class TenmoService {
         User[] users = null;
         //try to get Response
         try {
-            ResponseEntity<User[]> response = restTemplate.exchange(API_BASE_URL + "users", HttpMethod.GET, makeAuthEntity(), User[].class);
+            ResponseEntity<User[]> response = restTemplate.exchange(API_BASE_URL + "account/users", HttpMethod.GET, makeAuthEntity(), User[].class);
             users = response.getBody();
         }//catch exception if server error response or I/O exception occurs.
         catch (RestClientResponseException | ResourceAccessException e) {

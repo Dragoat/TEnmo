@@ -27,19 +27,23 @@ public class AccountController {  //gets the request from client on port 8080
         this.accountDao = accountDao;
     }
 
-    @RequestMapping(path = "/accounts", method = RequestMethod.GET)
-    //someone is requesting information, and I'm going to run method
+    //endpoint that gives the balance of the authenticated user.
+    @RequestMapping(path = "account/balance", method = RequestMethod.GET)
     public BigDecimal getAccountBalance(Principal principal) {
 
-        String username = principal.getName(); //if logged in, we can get their name
-        int userId = userDao.findIdByUsername(username); //can get their userId because principal gave us the name (principal is already coded)
+        //gets username of current login user.
+        String username = principal.getName();
 
+        //gets the userId
+        int userId = userDao.findIdByUsername(username);
+
+        //
         Account account = accountDao.getAccount(userId);
         return account.getBalance();
 
     }
 
-    @RequestMapping(path = "/users", method = RequestMethod.GET)
+    @RequestMapping(path = "account/users", method = RequestMethod.GET)
     public List<User> getUsersToSendMoney(Principal principal) {
         int id = userDao.findIdByUsername(principal.getName());
         return userDao.findAllForSendingMoney(id);
