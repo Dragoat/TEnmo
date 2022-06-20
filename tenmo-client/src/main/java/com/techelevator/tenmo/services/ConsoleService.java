@@ -90,7 +90,7 @@ public class ConsoleService {
         System.out.println("An error occurred. Check the log for details.");
     }
 
-    //added
+    //displays part of the Tenmo app UI.
     public void printSendTEBucksHeader(){
         System.out.println("_____________________________________________________");
         System.out.println("User                                                 ");
@@ -98,16 +98,19 @@ public class ConsoleService {
         System.out.println("_____________________________________________________");
     }
 
+    //displays part of the Tenmo app UI.
     public void printTransactionHeaderBottom(){
         System.out.println("_____________");
     }
 
+    //displays part of the Tenmo app UI.
     public void printTransactionDetailsHeader(){
         System.out.println("_____________________________________________________");
         System.out.println("                Transfer Details                     ");
         System.out.println("_____________________________________________________");
     }
 
+    //displays part of the Tenmo app UI.
     public void printTransactionHeader(){
         System.out.println("_____________________________________________________");
         System.out.println("Transfers                                            ");
@@ -116,6 +119,7 @@ public class ConsoleService {
 
     }
 
+    //Checks if number typed is Double.
     public double promptForDouble(String prompt) {
         System.out.print(prompt);
         while (true) {

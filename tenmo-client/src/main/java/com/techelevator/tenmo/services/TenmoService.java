@@ -23,26 +23,33 @@ public class TenmoService {
         this.authToken = authToken;
     }
 
+    //sends request to server to get Balance
     public BigDecimal getBalance(){
         BigDecimal balance = null;
+        //try to get Response
         try{
             ResponseEntity< BigDecimal > response = restTemplate.exchange(API_BASE_URL + "accounts" , HttpMethod.GET, makeAuthEntity(), BigDecimal.class );
             balance = response.getBody();
-        }
+        }//catch exception if server error response or I/O exception occurs.
         catch (RestClientResponseException | ResourceAccessException e ) {
             BasicLogger.log(e.getMessage());
         }
+        //returns the balance.
         return balance;
     }
 
+    //sends request to server to retrieve all user
     public User[] getAllUsersForSendingMoney(){
         User[] users = null;
+        //try to get Response
         try {
             ResponseEntity<User[]> response = restTemplate.exchange(API_BASE_URL + "users", HttpMethod.GET, makeAuthEntity(), User[].class);
             users = response.getBody();
-        } catch (RestClientResponseException | ResourceAccessException e) {
+        }//catch exception if server error response or I/O exception occurs.
+        catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
+        //returns list of users.
         return users;
     }
 

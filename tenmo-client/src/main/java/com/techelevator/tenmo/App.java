@@ -17,7 +17,6 @@ import java.util.Scanner;
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
-
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private final TransferService transferService = new TransferService();
@@ -69,8 +68,9 @@ public class App {
             consoleService.printErrorMessage();
         }
         else{
-            tenmoService.setAuthToken(currentUser.getToken());//added
-            transferService.setAuthToken(currentUser.getToken());//added
+            //gets the unique Authorization token generated in the registration of the user.
+            tenmoService.setAuthToken(currentUser.getToken());
+            transferService.setAuthToken(currentUser.getToken());
         }
     }
 
@@ -100,31 +100,32 @@ public class App {
 
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
+        //getsBalance from the service response
         System.out.println(transferService.getBalance());
 	}
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
         showTransactionList();
+        //checks if id entered is a integer
         int transferId = consoleService.promptForInt("Enter transfer id to view transaction (0 to cancel): ");
+        //method to select the information to view from the transferId.
         selection(transferId);
 
 	}
 
-	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
-	}
-
-	private void sendBucks() {
-		// TODO Auto-generated method stub
-         //will print out each user down on the list
-
+    private void sendBucks() {
+        // TODO Auto-generated method stub
+        //creates array with existing user and displays them.
         User existingUsers[] = AllUserList();
+        //gives the user the option to insert the userId in order to send money to existing user.
         String str1 = "\nEnter user id to request money from (0 to cancel): ";
         selectUserToTransfer(existingUsers,str1);
 
-        }
+    }
 
+
+    //method not finished.
     private void requestBucks() {
         // TODO Auto-generated method stub
         User existingUsers[] = AllUserList();
@@ -136,6 +137,12 @@ public class App {
 
     }
 
+
+
+
+
+
+    //Displays list of transfer
     private void showTransactionList(){
         Transfer[] transferList = transferService.getTransferList();
         consoleService.printTransactionHeader();
@@ -144,28 +151,42 @@ public class App {
         }
     }
 
+
+
+
     public void selection(int transferId) {
         consoleService.printTransactionHeaderBottom();
+        //checks the transfer id input is not zero
         if (transferId == 0) {
             consoleService.printMainMenu();
-        } else {
+        }
+        //if transfer Id anything except zero
+        else {
+            //displays UI.
             consoleService.printTransactionDetailsHeader();
+            //sends transferId to get a ServerResponse.
             Transfer transfer = new Transfer();
             transfer = transferService.getTransferById(transferId);
+            //give info about the the user with that transferId
             System.out.println(transfer.toStringForTransferDetails());
+            //display UI
             consoleService.printTransactionHeaderBottom();
         }
     }
 
 
 
+    //Displays list of user
     public User[] AllUserList() {
+        //get List of user from the response of the server
         User[] userList = tenmoService.getAllUsersForSendingMoney();
+        //display UI
         consoleService.printSendTEBucksHeader();
+        //prints and formats users.
         for (User eachUser : userList) {
             System.out.println(eachUser.toString());
         }
-
+        //returns the user list
         return userList;
 
     }
@@ -173,39 +194,58 @@ public class App {
 
     public void selectUserToTransfer(User[] userList, String str1) {
         boolean IsmatchId = false;
+        //displays UI.
         consoleService.printTransactionHeaderBottom();
+        //if IsmatchId is true at the end of the loop breaks out of the loop.
         while (!IsmatchId) {
+            //get user id and convert it to int.
             int userToId = consoleService.promptForInt(str1);
 
+            //checks list of user
             for (User user : userList) {
+                //checks that id of the current user is not the same as select user.
                 if (user.getId() == userToId && userToId != 0) {
-
+                    //checks that userName is not the same currentUserName.
                     if (!user.getUsername().equals(currentUser)) {
                         IsmatchId = true;
                     }
+                }
+                //if user is zero breaks out of the loop to main menu.
+                else if (userToId == 0){
+                    consoleService.printMainMenu();
+                    return; //break;
+                }
+            }
 
-                } else if (userToId == 0){  consoleService.printMainMenu(); return; } // break breaks out of loop
-            }                                                                         // return breaks out of the method
-
+            //Procceds with Transaction if user id is different and userName is different
             if (IsmatchId) {
+                //ask user for transfer amount and checks if amount is valid.
                 double inputAmount = consoleService.promptForDouble("\nEnter Dollar amount including decimal: $");
+                //amount is less or zero.
                 if(inputAmount <= 0){
+                    //tells user error message and returns to the menu.
                     System.out.println("Please enter a amount larger than zero");
                     IsmatchId = true;
                     break;
                 }
+                //convert amount to BigDecimal
                 BigDecimal transferAmount = BigDecimal.valueOf(inputAmount);
                 Transfer transfer = new Transfer();
+                //sets amount to Sender
                 transfer.setAmount(transferAmount);
+                //sets SenderId
                 transfer.setReceiverId(userToId);
 
-                transfer.setAmountToReciver(transferAmount);//added
+
+                //setAmount to Reciever
+                transfer.setAmountToSender(transferAmount);
+                //set Id to Reciever
                 transfer.setSenderId(Math.toIntExact(currentUser.getUser().getId()));//added
 
-
-
+                //gives the info for the Server in order to transfer money
                 transferService.sendMoney(transfer);
 
+                //if user not founds prints message and returns to selection.
             } else {
                 System.out.println("User ID is not found");
                 break;
@@ -213,6 +253,11 @@ public class App {
         }
 
     }
+
+    private void viewPendingRequests() {
+        // TODO Auto-generated method stub
+    }
+
 
 
 

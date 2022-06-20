@@ -52,7 +52,7 @@ public class Transfer {
         return amount;
     }//added
 
-    public void setAmountToReciver(BigDecimal amount) {//added
+    public void setAmountToSender(BigDecimal amount) {//added
         this.amount = amount;
     }
 
