@@ -74,7 +74,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public String findUserNameByAccountId(int id) {
-        //data base query that joins tenmouser and account to get username
+        //data base query that joins tenmo user and account to get username
         String sql = "SELECT username FROM tenmo_user JOIN account ON account.user_id = tenmo_user.user_id" +
                 " WHERE account_id = ?";
         //convert the row into an object via row mapper.
@@ -106,7 +106,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean create(String username, String password) {
-        // create new user
+        // create a new user
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
         Integer newUserId;

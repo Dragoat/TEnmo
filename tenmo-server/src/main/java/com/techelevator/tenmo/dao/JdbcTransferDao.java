@@ -29,34 +29,42 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public String getTransferType(int transferId) {
+        //data base query
         String sql = "SELECT transfer_type_desc \n" +
                 "FROM transfer_type \n" +
                 "JOIN transfer ON transfer_type.transfer_type_id = transfer.transfer_type_id \n" +
                 "WHERE transfer_id = ?";
 
+        //return result from the sql query
         return jdbcTemplate.queryForObject(sql, String.class, transferId);
     }
 
     @Override
     public void addToReceiverBalance(int userId, BigDecimal amount) {
+        //data base query
         String sql = "UPDATE account SET balance = balance + ? WHERE user_id = ?";
-        jdbcTemplate.update(sql, amount, userId); //correlate to ?
+        //return result from the sql query
+        jdbcTemplate.update(sql, amount, userId);
     }
 
     @Override
     public void subtractFromSenderBalance(int userId, BigDecimal amount) {
+        //data base query
         String sql = "UPDATE account SET balance = balance - ? WHERE user_id = ?";
+        //return result from the sql query
         jdbcTemplate.update(sql, amount, userId);
     }
 
     @Override
     public boolean createTransfer(Transfer transfer) throws Exception {
         System.out.println(transfer.toString());
+        //creates transfer record to sender
         String sql = "INSERT INTO transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount)\n" +
                 "VALUES (?, ?, (SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING transfer_id";
         BigDecimal amount = transfer.getAmount();
         boolean success = false;
 
+        //check if the transfer is less than zero
         if (amount.compareTo(accountDao.getBalance(transfer.getSenderId())) <= 0 && amount.compareTo(BigDecimal.ZERO) > 0) {
             int id = jdbcTemplate.queryForObject(sql, int.class, 2, 2, transfer.getSenderId(), transfer.getReceiverId(), transfer.getAmount());
             sql = "SELECT * FROM transfer WHERE transfer_id = ?";
@@ -74,6 +82,7 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public boolean createTransferToSender(Transfer transfer) throws Exception {
+        //creates transfer history to reciever
         System.out.println(transfer.toString());
         String sql = "INSERT INTO transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount)\n" +
                 "VALUES (?, ?, (SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING transfer_id";
