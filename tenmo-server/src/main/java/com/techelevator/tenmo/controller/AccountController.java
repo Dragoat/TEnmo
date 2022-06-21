@@ -16,13 +16,13 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-public class AccountController {  //gets the request from client on port 8080
+public class AccountController {
 
-    AccountDao accountDao; //controller talks through the dao
+    AccountDao accountDao;
     UserDao userDao;
 
     @Autowired
-    public AccountController(UserDao userDao, AccountDao accountDao) {  //when we create an account controller, i need a user dao
+    public AccountController(UserDao userDao, AccountDao accountDao) {
         this.userDao = userDao;
         this.accountDao = accountDao;
     }
@@ -33,19 +33,21 @@ public class AccountController {  //gets the request from client on port 8080
 
         //gets username of current login user.
         String username = principal.getName();
-
         //gets the userId
         int userId = userDao.findIdByUsername(username);
-
-        //
+        //gets the account info
         Account account = accountDao.getAccount(userId);
+        //returns the balance of the account
         return account.getBalance();
 
     }
 
+    //endpoint that give the list of the users available to send money
     @RequestMapping(path = "account/users", method = RequestMethod.GET)
     public List<User> getUsersToSendMoney(Principal principal) {
+        //gets the username list based on comparing the current username pattern
         int id = userDao.findIdByUsername(principal.getName());
+        //returns user you can send money not including yourself
         return userDao.findAllForSendingMoney(id);
     }
 }

@@ -95,22 +95,6 @@ public class JdbcTransferDao implements TransferDao {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private Transfer mapRowToTransfer(SqlRowSet results) throws Exception {
         Transfer transfer = new Transfer();
         transfer.setTransferId(results.getInt("transfer_id"));
@@ -130,6 +114,7 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public List<Transfer> getTransfersList(int id) throws Exception {
         List<Transfer> transfers = new ArrayList<>();
+        //data base query to get user info
         String sql = "SELECT transfer_id, amount, transfer_type_desc, transfer_status_desc, t.username " +
                 " AS username_from, t1.username AS username_to FROM transfer JOIN account a ON transfer.account_from = a.account_id" +
                 " JOIN account a1 ON transfer.account_to = a1.account_id" +
@@ -139,17 +124,21 @@ public class JdbcTransferDao implements TransferDao {
                 " JOIN transfer_type tt ON tt.transfer_type_id = transfer.transfer_status_id" +
                 " WHERE t.user_id = ?";
 
+        //convert the row into an object.
         SqlRowSet transferList = jdbcTemplate.queryForRowSet(sql, id);
         while (transferList.next()) {
             Transfer transfer = new Transfer();
+            //adds the database info into a list
             transfer.setTransferId(transferList.getInt("transfer_id"));
             transfer.setAmount(transferList.getBigDecimal("amount"));
             transfer.setTransferTypeDesc(transferList.getString("transfer_type_desc"));
             transfer.setTransferStatusDesc(transferList.getString("transfer_status_desc"));
             transfer.setUsernameFrom(transferList.getString("username_from"));
             transfer.setUsernameTo(transferList.getString("username_to"));
+            //saves object in a list
             transfers.add(transfer);
         }
+
         return transfers;
     }
 
@@ -177,14 +166,6 @@ public class JdbcTransferDao implements TransferDao {
         return transfer;
     }
 
-//    public String getTransferTypeDescByTransferId(int transferId) throws Exception {
-//        String sql = "SELECT transfer_type_desc FROM transfer_type WHERE transfer_type_id =?";
-//        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
-//        if (results.next()) {
-//            return results.getString("transfer_type_desc");
-//        }
-//        throw new Exception("Transfer desc not found.");
-//    }
 
     @Override
     public BigDecimal getBalance(int userId) {

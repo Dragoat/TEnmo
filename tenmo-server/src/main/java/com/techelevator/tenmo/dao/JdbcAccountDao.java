@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Component
-public class JdbcAccountDao implements AccountDao {//all database to server
+public class JdbcAccountDao implements AccountDao {
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcAccountDao(JdbcTemplate jdbcTemplate){
@@ -26,29 +26,36 @@ public class JdbcAccountDao implements AccountDao {//all database to server
 
     @Override
     public Account getAccount(int userId) {
+        //data base query to get user info
         String sql = "SELECT account_id, user_id, balance FROM account WHERE user_id = ?";
+        //convert the row into an object
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, userId);
         Account account = null;
-        if (result.next()){
+        //checks if object is not null
+        if (result.next()) {
             account = mapRowToAccount(result);
         }
+        //returns the account object found by using the userId
         return account;
     }
 
     @Override
     public void subtractMoneyFromAccount(BigDecimal amount, int userId){
+        //updates info from substracted account or account that send money
         String sql= "UPDATE account SET balance = balance + ? WHERE user_id = ?";
+        //stores new balance
         BigDecimal newBalance = getBalance(userId).add(amount);
+        //updates the new balance with user with the same userId
         jdbcTemplate.update(sql, newBalance, userId);
     }
 
     @Override
     public BigDecimal getBalance(int userId) {
-        Account account = new Account();                                      // contains all data for account
+        Account account = new Account();
         String sql = "SELECT * FROM account WHERE user_id = ?";
         SqlRowSet balance = jdbcTemplate.queryForRowSet(sql, userId);
         if (balance.next()){
-            account = mapRowToAccount(balance);                               // we implement helper method to set or object to balance
+            account = mapRowToAccount(balance);
         }
         return account.getBalance();
     }
